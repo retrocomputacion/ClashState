@@ -917,7 +917,7 @@ def Init_GUI():
 
     # GUI Font
     with dpg.font_registry():
-        font1 = dpg.add_font(os.path.abspath(os.path.join(CC.bundle_dir, "Chicago1st3.ttf")), 15)
+        font1 = dpg.add_font(os.path.abspath(os.path.join(CC.bundle_dir, "assets/Chicago1st3.ttf")), 15)
     dpg.bind_font(font1)
 
     # Global input handlers
