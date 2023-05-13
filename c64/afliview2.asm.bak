@@ -1,0 +1,263 @@
+;C64 executable code based on HermIRES's 'AFLI Exe' (Acme syntax version)
+bmpdata=$0A00
+bitmap=$4000
+vidram=$6000
+zpreg1=$fa
+zpreg2=$fb
+srcptr=$fc
+tgtptr=$fe
+titlePosY=1
+titlePosX=$50
+titleCol=1
+titleSpr=$0c00
+charROM=$d800
+tab18   = $0e00
+tab11   = $0f00
+!to "afliview.prg",cbm
+!sl "aflilabels.txt"
+
+		*= $0801
+!word ss,2022
+!byte $9e
+!text "2064"	;Sys 2064
+
+ss
+!word 0
+
+*= $0810		;INITIALIZATION AT PROGRAM START - set IRQ handlers, screen, and main VIC registers
+begin	sei
+		jsr udetect
+		lda #$35
+		sta $01
+		jsr Init
+		;jsr wrtitle
+		jmp *
+
+irq0:	pha
+		lda $d019
+		sta $d019
+		inc $d012
+		lda #<irq1
+		sta $fffe      ; set up 2nd IRQ to get a stable IRQ
+		cli
+
+			; Following here: A bunch of NOPs which allow the 2nd IRQ
+			; to be triggered with either 0 or 1 clock cycle delay
+			; resulting in an "almost" stable IRQ.
+
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+irq1:
+ntsc1:  lda #$ea       ; modified to NOP NOP on NTSC
+		lda #$80
+		sta $d018      ; setup first color RAM address early
+		lda #$38
+		sta $d011      ; setup first DMA access early
+		pla
+		pla
+		pla
+		lda $d019
+		sta $d019
+		lda #$2d
+		sta $d012
+		lda #<irq0		;2
+		sta $fffe		;4 switch IRQ back to first stabilizer IRQ
+		lda $d012		;4
+		cmp $d012		;4 stabilize last jittering cycle
+		beq delay		;2/3 if equal, 2 cycles delay. else 3 cycles delay
+delay:
+        stx savex+1		;4
+
+		ldx #$0d		;2
+wait:	dex				;2
+		bne wait		;2/3
+		;57 cycles here
+ntsc2:  lda #$ea       ; modified to NOP NOP on NTSC
+ntsc3:  lda #$ea       ; modified to NOP NOP on NTSC
+
+        ; Following here is the main FLI loop which forces the VIC-II to read
+        ; new color data each rasterline. The loop is exactly 23 clock cycles
+        ; long so together with 40 cycles of color DMA this will result in
+        ; 63 clock cycles which is exactly the length of a PAL C64 rasterline. 
+
+        nop
+        nop
+l0:
+		lda tab18+1,x
+		sta $d018      ; set new color RAM address
+		lda tab11+1,x
+		sta $d011      ; force new color DMA
+		inx            ; FLI bug $D800 color = 8 (orange)
+		cpx #199       ; last rasterline?
+ntsc4:	bne l0         ; branches to l0-1 on NTSC for 2 extra cycles per rasterline
+
+        lda #$70
+        sta $d011      ; open upper/lower border
+
+;       lda $d016
+;       eor #$01       ; IFLI: 1 hires pixel shift every 2nd frame
+;       sta $d016
+;       lda $dd00
+;       eor #$02       ; IFLI: flip between banks $4000 and $C000 every frame
+;       sta $dd00
+
+savex:  ldx #$00
+        pla
+nmi:    rti
+
+
+;--------------------------------------------------------
+Init	lda #$0f ;border-colour
+		sta $d020
+		sta $d021
+
+		
+		ldy #0			;copy bitmap & colour data to its place
+		lda #<(bmpdata+$4000)
+		ldx #>(bmpdata+$4000)
+		sta srcptr+0
+		stx srcptr+1
+		lda #<(bitmap+$4000)
+		ldx #>(bitmap+$4000)
+		sta tgtptr+0
+		stx tgtptr+1
+		ldy #0
+-		lda (srcptr),y
+		sta (tgtptr),y
+		iny
+		bne -
+		dec srcptr+1
+		dec tgtptr+1
+		lda tgtptr+1
+		cmp #>(bitmap)
+		bpl -
+		
+		lda #$08		; Multicolor off
+		sta $d016
+		;lda #$08
+		sta $d018
+		lda #$96       ; VIC bank $4000-$7FFF
+		sta $dd00		
+		lda #$ff
+		sta $3fff
+		sta $7fff		;disable idle-graphics
+
+        lda #$7f
+        sta $dc0d      ; no timer IRQs
+        lda $dc0d      ; clear timer IRQ flags
+
+        lda #$2b
+        sta $d011
+        lda #$2d
+        sta $d012
+
+        lda #<nmi
+        sta $fffa
+        lda #>nmi
+        sta $fffb      ; dummy NMI to avoid crashing due to RESTORE
+        lda #<irq0
+        sta $fffe
+        lda #>irq0
+        sta $ffff
+		jsr inittables
+        lda #$01
+        sta $d01a      ; enable raster IRQs
+        lda $d019
+        dec $d019      ; clear raster IRQ flag
+        cli
+        rts
+
+inittables:
+	ldx #$00
+l2:	txa
+	asl
+	asl
+	asl
+	asl
+	and #$70       ; color RAMs at $6000
+	ora #$80       ; bitmap data at $4000
+	sta tab18,x    ; calculate $D018 table
+	txa
+	and #$07
+	ora #$38       ; bitmap
+	sta tab11,x    ; calculate $D011 table
+	inx
+	bne l2
+	rts
+		
+; Detect C64 model
+udetect:
+	;sei
+	lda #$FE
+	and $DC0E
+	sta $DC0E
+	lda #$38
+	sta $DC04
+	lda #$4F
+	sta $DC05
+	lda #<MIRQ
+	sta $0314
+	lda #>MIRQ
+	sta $0315
+;Wait for raster line zero
+.z1	lda $D012
+	bne .z1
+	lda $D011
+	and #$80
+	bne .z1
+	sta Flg		;Clear test flag
+	inc $DC0E	;Start timer
+	cli
+.f1	ldy Flg
+	beq .f1		;Wait for test flag
+	lda Ras
+.s1	cmp #$0B	;PAL-B/G?
+	beq .n0
+	;no, adapt for NTSC/Drean
+	lda #$ea
+	sta ntsc1
+    sta ntsc2
+    sta ntsc3
+	dec ntsc4+1
+	
+;
+.n0	sei
+	rts
+
+MIRQ
+	lda $DC0D
+	cmp #$81
+	bne .p1
+	ldx Flg
+	bne .p1
+	inc Flg
+	lda $D012
+	sta Ras
+	;inc V_BORDER
+.p1	jmp $ea81
+
+Flg	!byte 00
+Ras	!byte 00	;PALG 11 NTSC 50 NTSCold 56 PALN 1
+
+
+ENDOFCODE
+!if ENDOFCODE >= bmpdata {
+	!error "ERROR - TOO MUCH CODE BEFORE BITMAP-DATA! CHANGE BMPDATA ADDRESS!"
+}
+;====================================================================================================
+!align $FF, $00	;Align to next page

@@ -1,0 +1,12 @@
+	ENDOFCODE	= $88b
+	tgtptr	= $fe
+	nmi	= $81b
+	tab18	= $e00	; unused
+	tab11	= $f00	; unused
+	bmpdata	= $900
+	Init	= $81c	; ?
+	srcptr	= $fc
+	begin	= $810	; unused
+	bitmap	= $4000
+	ss	= $80a	; ?
+	vidram	= $6000	; unused

@@ -1,0 +1,11 @@
+	color	= $1c00	; unused
+	luma	= $1800
+	ENDOFCODE	= $1064
+	tgtptr	= $fe
+	nmi	= $1014	; unused
+	bmpdata	= $1100
+	Init	= $1015	; ?
+	srcptr	= $fc
+	begin	= $100d	; unused
+	bitmap	= $2000	; unused
+	ss	= $100a	; ?
