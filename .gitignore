@@ -61,7 +61,6 @@
 /misato_test4.png
 /misato_test_msx1.png
 /mode2.txt
-/modules
 /mononoke.prg
 /motoko.prg
 /motoko1.koa
@@ -129,3 +128,19 @@
 /worf.koa
 /zx_1.png
 /zxtest.scr
+modules/__pycache__/c64.cpython-38.pyc
+.gitignore
+modules/__pycache__/common.cpython-38.pyc
+modules/__pycache__/dither.cpython-38.pyc
+.gitignore
+modules/__pycache__/msx.cpython-38.pyc
+modules/__pycache__/palette.cpython-38.pyc
+modules/__pycache__/plus4.cpython-38.pyc
+modules/__pycache__/zxspectrum.cpython-38.pyc
+igua.sc2
+igua1.prg
+mac2.art
+retromem.art
+retromem.png
+rm1.art
+modules/__pycache__/common.cpython-311.pyc
