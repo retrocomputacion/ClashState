@@ -1,4 +1,3 @@
-import hitherdither
 from . import palette as Palette
 import numpy as np
 from .palette import CCIR_LUMINOSITY

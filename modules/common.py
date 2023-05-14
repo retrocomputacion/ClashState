@@ -2,7 +2,6 @@
 # Common routines/variables
 
 import math
-import skimage
 
 #R,G,B to 24bit
 RGB24= lambda rgb: rgb[2]+rgb[1]*256+rgb[0]*65536

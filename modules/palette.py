@@ -3,7 +3,7 @@
 import hitherdither
 from PIL import Image
 import numpy as np
-from skimage.color import rgb2lab, deltaE_ciede2000, deltaE_cmc, deltaE_ciede94
+from skimage.color import rgb2lab, deltaE_ciede2000
 from enum import Enum
 
 

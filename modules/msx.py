@@ -47,8 +47,12 @@ def msx_get2closest(colors,p_in,p_out,fixed):
         closest.append(CC.RGB24(m).tolist())
         _indexes[x] = cc
     if len(closest) == 1:
-        closest.append(closest[0])
-        _indexes[1]=_indexes[0]
+        closest.append(CC.RGB24(p_in[1][0]).tolist())
+        _indexes[1]= 1
+    tix = sorted(_indexes)  #Sort by color index
+    if tix != _indexes:
+        closest.reverse()
+        _indexes = tix
     return(_indexes,Palette.Palette(closest))
 
 
