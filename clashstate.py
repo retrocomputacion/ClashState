@@ -26,7 +26,7 @@ import modules.dither as DT
 CC.bundle_dir = ''
 
 # Version number
-version = 0.8
+__version__ = 0.8
 
 # Main loop flag
 Quit = False
@@ -698,7 +698,7 @@ def set_mode(sender, appdata):
         wx = int(sender[-1])
         dpg.configure_item('bg_group2_'+str(wx), show= (appdata=='Manual selection'))
         if appdata=='Manual selection':
-            bgcolor[wx] = next(i for i, item in enumerate(Work_Palette) if item['RGBA'] == dpg.get_value("bg_color"+str(wx)))#PaletteRGB.index(dpg.get_value('bg_color')[:3])
+            bgcolor[wx] = next(i for i, item in enumerate(Work_Palette) if item['RGBA'] == dpg.get_value("bg_color"+str(wx)))
         elif appdata=='Estimate':
             bgcolor[wx] = -1
         else:
@@ -912,7 +912,7 @@ def Init_GUI():
     global og_tex, cv_tex
 
     dpg.create_context()
-    dpg.create_viewport(title='ClashState '+str(version), width=800,height=600, resizable=False)
+    dpg.create_viewport(title='ClashState '+str(__version__), width=800,height=600, resizable=False)
     dpg.setup_dearpygui()
 
     # GUI Font
@@ -971,7 +971,7 @@ def Init_GUI():
     with dpg.window(label="About", modal=True, show=False, tag="aboutw_id", no_title_bar=True,pos=(200,200),no_resize=True):
         dpg.add_image_button(texture_tag="splash_id", frame_padding=0, callback=lambda: dpg.configure_item("aboutw_id", show = False))
         dpg.add_separator()
-        dpg.add_text("ClashState v"+str(version),color=(128,240,0))
+        dpg.add_text("ClashState v"+str(__version__),color=(128,240,0))
         dpg.add_separator()
         dpg.add_text("©2022-2023 by Durandal/Retrocomputacion")
 

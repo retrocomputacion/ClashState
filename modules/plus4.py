@@ -64,7 +64,7 @@ def plus4_get2closest(colors,p_in,p_out,fixed):
 #Multicolor
 def plus4_get4closest(colors, p_in, p_out, bgcolor):
     cd = [[0 for j in range(len(p_in))] for i in range(len(colors))]
-    brgb = CC.RGB24(next(x[0].tolist() for x in p_in if x[1]==bgcolor[0]))  #CC.RGB24(p_out[bgcolor]).tolist()   #PaletteRGB[bgcolor][2]+PaletteRGB[bgcolor][1]*256+PaletteRGB[bgcolor][0]*65536
+    brgb = CC.RGB24(next(x[0].tolist() for x in p_in if x[1]==bgcolor[0]))
     brgb2 = CC.RGB24(next(x[0].tolist() for x in p_in if x[1]==bgcolor[3]))
     
     closest = [brgb,brgb,brgb,brgb]

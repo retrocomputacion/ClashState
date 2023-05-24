@@ -61,7 +61,7 @@ def c64_get2closest(colors,p_in,p_out,fixed):
 #Multicolor
 def c64_get4closest(colors, p_in, p_out, bgcolor):
     cd = [[0 for j in range(len(p_in))] for i in range(len(colors))]
-    brgb = CC.RGB24(next(x[0].tolist() for x in p_in if x[1]==bgcolor[0]))  #CC.RGB24(p_out[bgcolor]).tolist()   #PaletteRGB[bgcolor][2]+PaletteRGB[bgcolor][1]*256+PaletteRGB[bgcolor][0]*65536
+    brgb = CC.RGB24(next(x[0].tolist() for x in p_in if x[1]==bgcolor[0]))
     closest = [brgb,brgb,brgb,brgb]
     _indexes = [bgcolor[0],bgcolor[0],bgcolor[0],bgcolor[0]]
     #Attr
@@ -162,7 +162,8 @@ def buildfile(buffers,bg,baseMode):
         #ColorRAM
         t_data += bytes(buffers[2])#cram
         #Background
-        t_data += bg[0].to_bytes(1,'big')
+        bg_color = int(bg[0]) if bg[0]>0 else 0 #background color
+        t_data += bg_color.to_bytes(1,'big')
     elif baseMode == 0:   #Save ArtStudio
         t_data = b'\x00\x20' #Load address
         #Bitmap
@@ -198,13 +199,14 @@ def buildfile(buffers,bg,baseMode):
                 t_data += bytes([126]*2)    #sprite pointers
             t_data += bytes(buffers[8])
             t_data += b'\x00'   #border color
-    elif baseMode > 4:     #Hires PRG
+    elif baseMode >= 4:     #Hires PRG
         with open(os.path.abspath(os.path.join(CC.bundle_dir, "c64/64view.prg")),'rb') as vf:
             t_data = vf.read()
             t_data += bytes(buffers[0]) #Bitmap
             t_data += bytes(192)
             t_data += bytes(buffers[1]) #Screen
-            t_data += bg[0].to_bytes(1,'big')   #background color
+            bg_color = int(bg[0]) if bg[0]>0 else 0
+            t_data += bg_color.to_bytes(1,'big')   #background color
             if baseMode == 5:
                 t_data += b'\x18'   #Multicolor mode
                 t_data += bytes(22)
