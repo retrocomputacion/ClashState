@@ -342,14 +342,14 @@ def Image_convert(Source:Image, in_pal:list, out_pal:list, gfxmode:int=1, lumaD:
             for j in range(0,height,y_step):        # Step thru attribute cells
                 for i in range(0,width,x_step):
                     z = np.reshape(n_img[j:j+y_step,i:i+x_step],(-1))   #get bitmap cell
-                    if len(np.unique(z)) >= k:
-                        ucount = np.bincount(z)
+                    if len(np.unique(z)) >= k:  #More than k colors in the cell?
+                        ucount = np.bincount(z) #Number of pixels for each color index
                         for l,t in enumerate(bg_color):
-                            if t == -1:
+                            if t == -1 and Mode['global_colors'][l]:
                                 ccount[l] = np.append(ccount[l],np.argmax(ucount))
                                 ucount[np.argmax(ucount)] = -1  #Remove the color 
             for j in range(len(bg_color)):
-                if bg_color[j] == -1:
+                if bg_color[j] == -1 and Mode['global_colors'][j]:
                     if len(ccount[j]) > 0:
                         bg_color[j] = np.argmax(np.bincount(ccount[j]))
                     else:
