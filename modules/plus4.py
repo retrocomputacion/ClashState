@@ -68,7 +68,6 @@ def plus4_get4closest(colors, p_in, p_out, bgcolor):
     brgb2 = CC.RGB24(next(x[0].tolist() for x in p_in if x[1]==bgcolor[3]))
     
     closest = [brgb,brgb,brgb,brgb2]
-    #print(bgcolor)
     _indexes = [bgcolor[0],bgcolor[0],bgcolor[0],bgcolor[3]]
     #Attr
     indexes = 0#0x33
@@ -82,18 +81,11 @@ def plus4_get4closest(colors, p_in, p_out, bgcolor):
             bi.append(tc.index(min(tc)))
             tc.pop(tc.index(min(tc)))
     xx = 1
-    #npin = np.asarray([c[0] for c in p_in])
-    #ncolors = np.asarray([c[1] for c in colors])
     for x in range(0,len(colors)):
         if x in bi:
             continue
         for y in range(0,len(p_in)):
-            # rd = colors[x][1][0] - p_in[y][0][0]
-            # gd = colors[x][1][1] - p_in[y][0][1]
-            # bd = colors[x][1][2] - p_in[y][0][2]
             cd[x][y] = CC.Redmean(colors[x][1],p_in[y][0])  #(rd * rd + gd * gd + bd * bd)    #This is the fastest distance method
-            # cd[x][y] = sum([(a - b)**2 for a, b in zip(colors[x][1], p_in[y][0])])
-            # cd[x][y] = np.linalg.norm(ncolors[x]-npin[y])
         xmin=cd[x].index(min(cd[x]))
         cc = p_in[xmin][1]
         m = p_in[xmin][0] #p_out[cc]

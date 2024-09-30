@@ -311,7 +311,7 @@ def Image_convert(Source:Image, in_pal:list, out_pal:list, gfxmode:int=1, lumaD:
         elif fullD == 7:
             o_img = DT.yliluomas_1_ordered_dithering(o_img, in_PaletteH, Progress,order=8) #Slow, must use order = 8
         elif fullD == 8:
-            o_img = hitherdither.ordered.cluster.cluster_dot_dithering(o_img, in_PaletteH,order=8, thresholds=Fthr) #Fast
+            o_img = hitherdither.ordered.cluster.cluster_dot_dithering(o_img, in_PaletteH,order=4, thresholds=Fthr) #Fast
         else:
             fsPal = [element for sublist in rgb_in for element in sublist[0]]
             plen = len(fsPal)//3
