@@ -5,4 +5,4 @@ opencv_python>=4.5.5.64
 Pillow>=9.5.0
 regex
 scikit_image
-skimage
+# skimage
