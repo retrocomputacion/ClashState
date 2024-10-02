@@ -973,7 +973,7 @@ def Init_GUI():
         dpg.add_separator()
         dpg.add_text("ClashState v"+str(__version__),color=(128,240,0))
         dpg.add_separator()
-        dpg.add_text("©2022-2023 by Durandal/Retrocomputacion")
+        dpg.add_text("©2022-2024 by Durandal/Retrocomputacion")
 
     #Busy modal
     with dpg.window(modal=True, show=False, tag='busy_id', no_title_bar=True, no_move=True, no_resize=True, no_background=True, pos=(370,120)):
